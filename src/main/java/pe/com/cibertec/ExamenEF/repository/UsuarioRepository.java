@@ -8,4 +8,5 @@ import pe.com.cibertec.ExamenEF.model.entity.UsuarioEntity;
 @Repository
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, String>{
 
+	UsuarioEntity findByCorreo(String correo);
 }

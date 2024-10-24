@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpSession;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -34,8 +36,31 @@ public class UsuarioController {
 		
 		usuarioService.crearUsuario(usuarioFormulario, foto);
 		
-		
 		return "registrar_usuario";
+	}
+	
+	@GetMapping("/")
+	public String mostrarLogin(Model model) {
+		model.addAttribute("usuario",new UsuarioEntity());
+		return "login";
+	}
+	
+	@PostMapping("/login")
+	public String login(@ModelAttribute("usuario") UsuarioEntity usuarioFormulario, Model model, HttpSession session) {
+		boolean validarUsuario = usuarioService.validarUsuario(usuarioFormulario);
+		if(validarUsuario) {
+			session.setAttribute("usuario", usuarioFormulario.getCorreo());
+			return "redirect:/menu";
+		}
+		model.addAttribute("loginInvalido", "No existe Usuario");
+		model.addAttribute("usuario", new UsuarioEntity());
+		return "login";
+	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/";
 	}
 	
 }
